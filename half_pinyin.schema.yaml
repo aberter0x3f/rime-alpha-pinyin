@@ -77,7 +77,7 @@ chord_composer:
     - 'xform/^A$/ /'
     - "xform/A/a"
     # 冲突
-    - "xform/^([btgc])on$/$1ong"
+    - "xform/^([btgc])([a-z]*)on$/$1$2ong"
 
   output_format:
     - "xform/^([a-z]+)$/$1'/"
