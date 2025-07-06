@@ -76,8 +76,6 @@ chord_composer:
     - "xform/N/n"
     - 'xform/^A$/ /'
     - "xform/A/a"
-    # 冲突
-    - "xform/^([btgc])([a-z]*)on$/$1$2ong"
 
   output_format:
     - "xform/^([a-z]+)$/$1'/"
@@ -167,7 +165,7 @@ speller:
     # 不好打的
     - derive/^p([aeiu]*)o/p$1/
     - derive/^([qz])([a-z]*)n/$1$2/
-    # - derive/^([btgc])([a-z]*)ng$/$1$2n/
+    - "xform/^([btgc])([a-z]*)ng$/$1$2n"
     # - derive/^([jfkln])([a-z]*)ng?$/$1$2/
     # - derive/^([jfykln])([a-z]*)ng$/$1$2n/
     # - derive/^([jfykln])([a-z]*)ng$/$1$2g/
@@ -305,4 +303,3 @@ recognizer:
 
 ascii_composer:
   import_preset: default
-
