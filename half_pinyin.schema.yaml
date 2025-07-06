@@ -1,0 +1,308 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  schema_id: &schema_id half_pinyin
+  name: 半拼
+  version: "0.1"
+  dependencies:
+    - latex
+    - pinyin_chaizi
+  author:
+    - aberter0x3f <aberter0x3f@disroot.org>
+  description: |
+    半拼
+
+switches:
+  - name: ascii_mode
+    reset: 0
+    states: [ 中, 西 ]
+  - name: zh_hant
+    states: [ 简, 繁 ]
+  - name: full_shape
+    reset: 0
+    states: [ 半, 全 ]
+  - name: single_char_mode
+    reset: 0
+    states: [ "多字", "单字" ]
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - chord_composer
+    - key_binder
+    - speller
+    - selector
+    - punctuator
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - affix_segmentor@chaizi_lookup
+    - affix_segmentor@latex_lookup
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - script_translator
+    - table_translator@chaizi_lookup
+    - table_translator@latex_lookup
+  filters:
+    - lua_filter@*is_in_user_dict
+    - lua_filter@*single_char_filter
+    - simplifier
+    - uniquifier
+    - reverse_lookup_filter@chaizi_reverse_lookup
+    - reverse_lookup_filter@latex_reverse_lookup
+
+simplifier:
+  option_name: zh_hant
+  opencc_config: s2t.json
+
+editor:
+  bindings:
+    BackSpace: back_syllable
+
+chord_composer:
+  alphabet: 'bcdfjkmlpqrstxzhngiuv oea'
+
+  algebra:
+    - "xform/a/N"
+    - "xform/ /A"
+    - "xform/^([bcdfjkmlpqrstxzhn]+)g([Aeiouv]+)N?$/$1$2ng"
+    - "xform/N/n"
+    - 'xform/^A$/ /'
+    - "xform/A/a"
+    # 冲突
+    - "xform/^([btgc])on$/$1ong"
+
+  output_format:
+    - "xform/^([a-z]+)$/$1'/"
+  prompt_format:
+    - 'xform/^(.*)$/[$1]/'
+
+speller:
+  alphabet: "zxvutsqponmlkjirhgfedcba'"
+  initials: zxvutsrqponmlkjihgfedcba
+  finals: "'"
+  delimiter: " "
+  algebra:
+    # 汉语拼音声调
+    - xform/ā/a/
+    - xform/á/a/
+    - xform/ǎ/a/
+    - xform/à/a/
+    - xform/å/a/
+    - xform/ō/o/
+    - xform/ó/o/
+    - xform/ǒ/o/
+    - xform/ò/o/
+    - xform/o̊/o/
+    - xform/ē/e/
+    - xform/é/e/
+    - xform/ě/e/
+    - xform/è/e/
+    - xform/e̊/e/
+    - xform/ī/i/
+    - xform/í/i/
+    - xform/ǐ/i/
+    - xform/ì/i/
+    - xform/i̊/i/
+    - xform/ū/u/
+    - xform/ú/u/
+    - xform/ǔ/u/
+    - xform/ù/u/
+    - xform/ů/u/
+    - xform/ǖ/v/
+    - xform/ǘ/v/
+    - xform/ǚ/v/
+    - xform/ǜ/v/
+    - xform/ü̊/v/
+    - xform/ü/v/
+    - xform/m̀/m/
+    - xform/ń/n/
+    - xform/ň/n/
+    - xform/ǹ/n/
+
+    - xform/^([a-z]+)[1-5]$/$1/
+    - xform/^r$/er/
+
+    - erase/^hm$/ # 取消「噷 hm」的独占
+    - xform/^m$/mu/  # 取消「呣 m」的独占
+    - xform/^n$/en/  # 取消「嗯 n」的独占
+    - xform/^ng$/eng/ # 取消「嗯 ng」的独占
+
+    - xform/^([nl])ue$/$1ve/
+    - xform/^([jqxy])u/$1v/
+
+    - "xform/^([bnl]ia)$/$1ng"
+
+    # 删除 y w
+    - xform/^yi/i/
+    - xform/^yu/u/
+    - xform/^yv/v/
+    - xform/^ya/ia/
+    - xform/^yo/io/
+    - xform/^ye/ie/
+    - xform/^wen$/nu/
+    - xform/^weng$/ong/
+    - xform/^w([aio])/u$1/
+    - xform/^wu/u/
+
+    # er 二 -> r
+    - xform/^er$/r/
+
+    # sort
+    - xform/ai/ia/
+    - xform/oi/io/
+    - xform/ui/iu/
+    - xform/ei/ie/
+    - xform/ou/uo/
+    # - xform/^([aeiouv]+)ng$/g$1ng/
+    - xform/^([aeiouv]+)ng$/g$1/
+
+    # 不好打的
+    - derive/^p([aeiu]*)o/p$1/
+    - derive/^([qz])([a-z]*)n/$1$2/
+    # - derive/^([btgc])([a-z]*)ng$/$1$2n/
+    # - derive/^([jfkln])([a-z]*)ng?$/$1$2/
+    # - derive/^([jfykln])([a-z]*)ng$/$1$2n/
+    # - derive/^([jfykln])([a-z]*)ng$/$1$2g/
+    # - derive/^([wbtgcv])([a-z]*)ng$/$1$2/
+    # - derive/^([wbtgcv])([a-z]*)ng$/$1$2n/
+    # - derive/ue/u/
+    # - derive/ue/e/
+
+    # 缩写
+    # - abbrev/ia/a/
+    # - abbrev/ia/i/
+    # - abbrev/ie/i/
+    # - abbrev/ie/e/
+    # - abbrev/iu/u/
+    # - abbrev/iu/i/
+    # - abbrev/ao/a/
+    # - abbrev/ao/o/
+    # - abbrev/ua/u/
+    # - abbrev/ua/a/
+    # - abbrev/uo/u/
+    # - abbrev/uo/o/
+    # - abbrev/re/e/
+
+    # - abbrev/n$//
+    # - abbrev/ng$//
+    # - abbrev/ng$/n/
+    # - abbrev/ng$/g/
+    # - abbrev/n$//
+
+    # - derive/[aeiouv]+ng?$/n/
+    # - derive/[aeiouv]+ng$/ng/
+    # - derive/[aeiouv]+ng$/g/
+
+    # 拼音音节一律后加隔音符号，避免音节切分歧义
+    - "xform/^([a-z]+)$/$1'/"
+
+translator:
+  dictionary: &dict
+    alpha_pinyin
+  prism: *schema_id
+  spelling_hints: 5  # x 字以内候选标注完整带调拼音
+  preedit_format:
+    - xform/([nljqxy])v/$1ü/
+    # - xlit !@#$% 12345
+    - xform ([aeiouü])(ng?|r)([1-5]) $1$3$2
+    - xform ([aeo])([iuo])([1-5]) $1$3$2
+    - "xform/'//"
+  comment_format: &pinyin_comment_format
+    - xform/([nljqxy])v/$1ü/
+    - xform ([aeiouü])(ng?|r)([1-5]) $1$3$2
+    - xform ([aeo])([iuo])([1-5]) $1$3$2
+    - 'xform a1 ā'
+    - 'xform a2 á'
+    - 'xform a3 ǎ'
+    - 'xform a4 à'
+    - 'xform a5 å'
+    - 'xform o1 ō'
+    - 'xform o2 ó'
+    - 'xform o3 ǒ'
+    - 'xform o4 ò'
+    - 'xform o5 o̊'
+    - 'xform e1 ē'
+    - 'xform e2 é'
+    - 'xform e3 ě'
+    - 'xform e4 è'
+    - 'xform e5 e̊'
+    - 'xform i1 ī'
+    - 'xform i2 í'
+    - 'xform i3 ǐ'
+    - 'xform i4 ì'
+    - 'xform i5 i̊'
+    - 'xform u1 ū'
+    - 'xform u2 ú'
+    - 'xform u3 ǔ'
+    - 'xform u4 ù'
+    - 'xform u5 ů'
+    - 'xform ü1 ǖ'
+    - 'xform ü2 ǘ'
+    - 'xform ü3 ǚ'
+    - 'xform ü4 ǜ'
+    - 'xform ü5 ü̊'
+  enable_user_dict: false
+
+chaizi_lookup:
+  tag: chaizi_lookup
+  prism: pinyin_chaizi
+  dictionary: pinyin_chaizi
+  enable_user_dict: false
+  prefix: "y"
+  suffix: "'"
+  preedit_format: &pinyin
+    - xform/([nl])v/$1ü/
+    - xform/([nl])ue/$1üe/
+    - xform/([jqxy])v/$1u/
+  tips: 【拆字】
+  closing_tips: 【全拼】
+  enable_sentence: false
+  enable_completion: true
+
+chaizi_reverse_lookup:
+  tags: [ chaizi_lookup ]
+  overwrite_comment: true
+  dictionary: *dict
+  comment_format: *pinyin_comment_format
+
+latex_lookup:
+  tag: latex_lookup
+  prism: latex
+  dictionary: latex
+  enable_user_dict: false
+  # prefix: "\\"
+  suffix: "'"
+  tips: 【LaTeX】
+  closing_tips: 【全拼】
+  enable_sentence: false
+  enable_completion: true
+
+latex_reverse_lookup:
+  tags: [ latex_lookup ]
+  overwrite_comment: true
+  dictionary: latex
+
+punctuator:
+  import_preset: default
+
+key_binder:
+  import_preset: default
+  bindings:
+    - { when: always, accept: "w", toggle: "single_char_mode" }
+
+recognizer:
+  patterns:
+    chaizi_lookup: "^y[a-z]*'?$"
+    latex_lookup: "^\\\\.*'?$"
+
+ascii_composer:
+  import_preset: default
+

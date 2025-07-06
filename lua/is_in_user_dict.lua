@@ -12,7 +12,7 @@ end
 
 function M.func(input, env)
   for cand in input:iter() do
-    -- 用户词库，加上*号
+    -- 用户词库，加上 * 号
     if cand.type == "user_phrase" then
       cand.comment = '*'
     end
@@ -21,7 +21,7 @@ function M.func(input, env)
     --     cand.comment = cand.comment .. '⚡️'
     -- end
 
-    -- 整句联想，加上𑄗符号
+    -- 整句联想，加上 𑄗  符号
     if cand.type == 'sentence' then
       cand.comment = '∞'
     end

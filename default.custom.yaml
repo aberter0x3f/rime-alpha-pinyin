@@ -8,6 +8,7 @@ patch:
       Shift_L: noop
       Shift_R: noop
   schema_list:
+    - schema: half_pinyin
     - schema: alpha_pinyin
   "key_binder/bindings":
     - {accept: "Control+p", send: Up, when: composing}
