@@ -73,6 +73,7 @@ chord_composer:
     - "xform/a/N"
     - "xform/ /A"
     - "xform/^([bcdfjkmlpqrstxzhn]+)g([Aeiouv]+)N?$/$1$2ng"
+    - "xform/^N$/a"
     - "xform/N/n"
     - 'xform/^A$/ /'
     - "xform/A/a"
@@ -145,10 +146,11 @@ speller:
     - xform/^ya/ia/
     - xform/^yo/io/
     - xform/^ye/ie/
-    - xform/^wen$/nu/
+    - xform/^wen$/un/
     - xform/^weng$/ong/
     - xform/^w([aio])/u$1/
     - xform/^wu/u/
+    - xform/^we/u/
 
     # er 二 -> r
     - xform/^er$/r/
@@ -166,11 +168,6 @@ speller:
     - derive/^p([aeiu]*)o/p$1/
     - derive/^([qz])([a-z]*)n/$1$2/
     - "xform/^([btgc])([a-z]*)ng$/$1$2n"
-    # - derive/^([jfkln])([a-z]*)ng?$/$1$2/
-    # - derive/^([jfykln])([a-z]*)ng$/$1$2n/
-    # - derive/^([jfykln])([a-z]*)ng$/$1$2g/
-    # - derive/^([wbtgcv])([a-z]*)ng$/$1$2/
-    # - derive/^([wbtgcv])([a-z]*)ng$/$1$2n/
     # - derive/ue/u/
     # - derive/ue/e/
 
@@ -303,3 +300,4 @@ recognizer:
 
 ascii_composer:
   import_preset: default
+
