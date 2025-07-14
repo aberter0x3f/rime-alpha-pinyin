@@ -23,6 +23,9 @@ switches:
   - name: full_shape
     reset: 0
     states: [ 半, 全 ]
+  - name: single_char_mode
+    reset: 0
+    states: [ "多字", "单字" ]
 
 engine:
   processors:
@@ -49,6 +52,7 @@ engine:
     - table_translator@latex_lookup
   filters:
     - lua_filter@*is_in_user_dict
+    - lua_filter@*single_char_filter
     - simplifier
     - uniquifier
     - reverse_lookup_filter@chaizi_reverse_lookup
@@ -319,6 +323,8 @@ punctuator:
 
 key_binder:
   import_preset: default
+  bindings:
+    - { when: always, accept: "Shift+W", toggle: "single_char_mode" }
 
 recognizer:
   patterns:
