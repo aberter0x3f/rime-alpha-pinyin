@@ -42,8 +42,8 @@ patch:
     # - {accept: greater, send: 8, when: has_menu}
     # - {accept: numbersign, send: 9, when: has_menu}
     # - {accept: at, send: 0, when: has_menu}
-  "menu/alternative_select_labels": [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" ] 
-  "menu/alternative_select_keys": "(){}[]<>#@"
+  "menu/alternative_select_labels": [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" ] 
+  "menu/alternative_select_keys": "!@#$%^&*()"
   punctuator:
     full_shape:
       "`": "｀"
