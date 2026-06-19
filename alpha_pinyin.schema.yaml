@@ -23,6 +23,9 @@ switches:
   - name: full_shape
     reset: 0
     states: [ 半, 全 ]
+  - name: ascii_punct
+    reset: 0
+    states: [ 中标, 西标 ]
   - name: single_char_mode
     reset: 0
     states: [ "多字", "单字" ]
